@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "magnetized:magnet_active",
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "magnetized:item/magnet_item_on"
+    },
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "magnetized:item/magnet_item_off"
+    }
+  }
+}

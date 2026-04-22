@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "minecraft:redstone",
+    "B": "minecraft:iron_ingot",
+    "C": "minecraft:lapis_lazuli",
+    "D": "minecraft:ender_pearl"
+  },
+  "pattern": [
+    "AB ",
+    " DB",
+    "CB "
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetized:magnet_item"
+  }
+}
