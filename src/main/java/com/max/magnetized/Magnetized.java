@@ -1,6 +1,7 @@
 package com.max.magnetized;
 
 import com.max.magnetized.component.ModDataComponents;
+import com.max.magnetized.item.LightningBottleItem;
 import com.max.magnetized.item.MagnetItem;
 import com.max.magnetized.item.ModItems;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import static com.max.magnetized.item.ModItems.LIGHTNING_BOTTLE_ITEM;
 import static com.max.magnetized.item.ModItems.MAGNET_ITEM;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -57,6 +59,7 @@ public class Magnetized {
             .icon(() -> MAGNET_ITEM.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(MAGNET_ITEM.get());
+                output.accept(LIGHTNING_BOTTLE_ITEM.get());
             }).build());
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.

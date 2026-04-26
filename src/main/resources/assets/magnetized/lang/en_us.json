@@ -4,6 +4,8 @@
   "magnet.magnetized.magnet": "Picks up blocks in a 7x7 radius around the player",
   "key.magnetized.toggle_magnet": "Toggle Magnet",
 
+  "item.magnetized.lightning_bottle_item": "Lightning in a Bottle",
+
   "magnetized.configuration.title": "Magnetized Configs",
   "magnetized.configuration.section.magnetized.common.toml": "Magnetized Configs",
   "magnetized.configuration.section.magnetized.common.toml.title": "Magnetized Configs"
