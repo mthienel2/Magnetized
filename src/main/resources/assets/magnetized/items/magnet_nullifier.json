@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "magnetized:block/magnet_nullifier"
+  }
+}

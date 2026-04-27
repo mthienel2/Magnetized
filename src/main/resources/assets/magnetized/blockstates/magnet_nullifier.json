@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=north": { "model": "magnetized:block/magnet_nullifier", "x": 90 },
+    "facing=south": { "model": "magnetized:block/magnet_nullifier", "x": 90, "y": 180 },
+    "facing=east":  { "model": "magnetized:block/magnet_nullifier", "x": 90, "y": 90 },
+    "facing=west":  { "model": "magnetized:block/magnet_nullifier", "x": 90, "y": 270 },
+    "facing=up":    { "model": "magnetized:block/magnet_nullifier" },
+    "facing=down":  { "model": "magnetized:block/magnet_nullifier", "x": 180 }
+  }
+}

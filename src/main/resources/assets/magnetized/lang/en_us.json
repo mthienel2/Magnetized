@@ -6,6 +6,9 @@
 
   "item.magnetized.lightning_bottle_item": "Lightning in a Bottle",
 
+  "item.magnetized.magnet_nullifier": "Magnet Nullifier",
+  "magnet_nullifier.magnetized.tooltip": "Suppresses nearby magnets in a 7x7 radius",
+
   "magnetized.configuration.title": "Magnetized Configs",
   "magnetized.configuration.section.magnetized.common.toml": "Magnetized Configs",
   "magnetized.configuration.section.magnetized.common.toml.title": "Magnetized Configs"

@@ -1,5 +1,6 @@
 package com.max.magnetized;
 
+import com.max.magnetized.block.ModBlocks;
 import com.max.magnetized.component.ModDataComponents;
 import com.max.magnetized.item.LightningBottleItem;
 import com.max.magnetized.item.MagnetItem;
@@ -35,8 +36,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import static com.max.magnetized.item.ModItems.LIGHTNING_BOTTLE_ITEM;
-import static com.max.magnetized.item.ModItems.MAGNET_ITEM;
+import static com.max.magnetized.block.ModBlocks.MAGNET_NULLIFIER;
+import static com.max.magnetized.item.ModItems.*;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Magnetized.MODID)
@@ -59,6 +60,7 @@ public class Magnetized {
             .icon(() -> MAGNET_ITEM.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 output.accept(MAGNET_ITEM.get());
+                output.accept(MAGNET_NULLIFIER_ITEM.get());
                 output.accept(LIGHTNING_BOTTLE_ITEM.get());
             }).build());
 
@@ -73,6 +75,8 @@ public class Magnetized {
         ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so mod items get registered
         ModItems.ITEMS.register(modEventBus);
+        // Register the Deferred Register to the mod event bus so mod blocks get registered
+        ModBlocks.BLOCKS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
         // Register data components

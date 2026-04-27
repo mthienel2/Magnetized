@@ -1,9 +1,12 @@
 package com.max.magnetized.event;
 
 import com.max.magnetized.Magnetized;
+import com.max.magnetized.block.ModBlocks;
 import com.max.magnetized.compat.CuriosCompat;
 import com.max.magnetized.component.ModDataComponents;
 import com.max.magnetized.item.ModItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -44,12 +47,37 @@ public class ModEvents {
     private static ItemStack findActiveMagnetInHotbar(Player player) {
         for (int i = 0; i < 9; i++) {
             ItemStack stack = player.getInventory().getItem(i);
-
             if (stack.is(ModItems.MAGNET_ITEM.get())) {
                 return stack;
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    private static boolean isNearNullifier(Entity entity, Level level) {
+        double ex = entity.getX();
+        double ey = entity.getY();
+        double ez = entity.getZ();
+
+        BlockPos center = entity.blockPosition();
+
+        for (BlockPos pos : BlockPos.betweenClosed(
+                center.offset(-10, -10, -10),
+                center.offset(10, 10, 10))) {
+
+            if (level.getBlockState(pos).is(ModBlocks.MAGNET_NULLIFIER.get())) {
+                double dx = Math.abs((pos.getX() + 0.5) - ex);
+                double dy = Math.abs((pos.getY() + 0.5) - ey);
+                double dz = Math.abs((pos.getZ() + 0.5) - ez);
+
+                // Check if item is within the 7x7x7 cube (3.5 in each direction)
+                if (dx <= 3.5 && dy <= 3.5 && dz <= 3.5) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static void pullItemsToPlayer(Player player, Level level) {
@@ -63,6 +91,8 @@ public class ModEvents {
         List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, area);
 
         for (ItemEntity item : items) {
+            if (isNearNullifier(item, level)) continue;
+
             double dx = player.getX() - item.getX();
             double dy = (player.getY() + 0.3) - item.getY();
             double dz = player.getZ() - item.getZ();
