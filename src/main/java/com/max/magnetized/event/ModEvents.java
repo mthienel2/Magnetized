@@ -81,6 +81,9 @@ public class ModEvents {
     }
 
     private static void pullItemsToPlayer(Player player, Level level) {
+        // If the player is in a nullifier zone, shut off the magnet entirely
+        if (isNearNullifier(player, level)) return;
+
         int radius = 7;
 
         AABB area = new AABB(
@@ -91,6 +94,7 @@ public class ModEvents {
         List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, area);
 
         for (ItemEntity item : items) {
+            // Skip items that are inside a nullifier zone
             if (isNearNullifier(item, level)) continue;
 
             double dx = player.getX() - item.getX();
