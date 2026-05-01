@@ -26,5 +26,17 @@ public class ModBlocks {
                     .lightLevel(state -> 4)
             )
     );
+
+    public static final DeferredBlock<ElectromagnetBlock> ELECTROMAGNET_BLOCK = BLOCKS.register(
+            "electromagnet_block",
+            registryName -> new ElectromagnetBlock(BlockBehaviour.Properties.of()
+                    .setId(ResourceKey.create(Registries.BLOCK, registryName))
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f, 6.0f)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+            )
+    );
 }
 

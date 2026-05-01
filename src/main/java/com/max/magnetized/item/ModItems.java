@@ -33,4 +33,9 @@ public class ModItems {
             "magnet_nullifier",
             props -> new MagnetNullifierBlockItem(ModBlocks.MAGNET_NULLIFIER.get(), props)
     );
+
+    public static final DeferredItem<BlockItem> ELECTROMAGNET_BLOCK_ITEM = ITEMS.registerItem(
+            "electromagnet_block",
+            props -> new ElectromagnetBlockItem(ModBlocks.ELECTROMAGNET_BLOCK.get(), props)
+    );
 }
