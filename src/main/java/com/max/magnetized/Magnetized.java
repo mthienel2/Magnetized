@@ -1,8 +1,13 @@
 package com.max.magnetized;
 
 import com.max.magnetized.block.ModBlocks;
+import com.max.magnetized.block.entity.ModBlockEntities;
 import com.max.magnetized.component.ModDataComponents;
 import com.max.magnetized.item.ModItems;
+import com.max.magnetized.menu.ModMenuTypes;
+import com.max.magnetized.network.ElectromagnetUpdatePacket;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -29,12 +34,10 @@ import static com.max.magnetized.item.ModItems.*;
 public class Magnetized {
     // Define mod id in a common place for everything to reference
     public static final String MODID = "magnetized";
+
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
-    // Create a Deferred Register to hold Blocks which will all be registered under the "magnetized" namespace
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
-    // Create a Deferred Register to hold Items which will all be registered under the "magnetized" namespace
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
+
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "magnetized" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
@@ -47,6 +50,7 @@ public class Magnetized {
                 output.accept(MAGNET_ITEM.get());
                 output.accept(MAGNET_NULLIFIER_ITEM.get());
                 output.accept(LIGHTNING_BOTTLE_ITEM.get());
+                output.accept(ELECTROMAGNET_BLOCK_ITEM.get());
             }).build());
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
@@ -54,14 +58,14 @@ public class Magnetized {
     public Magnetized(IEventBus modEventBus, ModContainer modContainer) {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-        // Register the Deferred Register to the mod event bus so mod items get registered
         ModItems.ITEMS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so mod blocks get registered
         ModBlocks.BLOCKS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so tabs get registered
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
-        // Register data components
         ModDataComponents.DATA_COMPONENTS.register(modEventBus);
+
+        ModMenuTypes.MENU_TYPES.register(modEventBus);
+        modEventBus.addListener(this::registerPayloads);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (Magnetized) to respond directly to events.
@@ -72,16 +76,21 @@ public class Magnetized {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
+    private void registerPayloads(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar(Magnetized.MODID);
+        registrar.playToServer(
+                ElectromagnetUpdatePacket.TYPE,
+                ElectromagnetUpdatePacket.STREAM_CODEC,
+                ElectromagnetUpdatePacket::handle
+        );
+    }
+
     private void commonSetup(FMLCommonSetupEvent event) {
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
         Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
     }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
+
     }
 }
