@@ -9,6 +9,9 @@
   "item.magnetized.magnet_nullifier": "Magnet Nullifier",
   "magnet_nullifier.magnetized.tooltip": "Suppresses nearby magnets in a 7x7 radius",
 
+  "item.magnetized.electromagnet_block": "Electromagnet",
+  "electromagnet_block.magnetized.tooltip": "Pushes or pulls entities in front of it when powered",
+
   "magnetized.configuration.title": "Magnetized Configs",
   "magnetized.configuration.section.magnetized.common.toml": "Magnetized Configs",
   "magnetized.configuration.section.magnetized.common.toml.title": "Magnetized Configs"
