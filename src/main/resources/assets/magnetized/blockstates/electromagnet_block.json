@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north,active=false,pushing=false": { "model": "magnetized:block/electromagnet_block" },
+    "facing=north,active=false,pushing=true":  { "model": "magnetized:block/electromagnet_block" },
+    "facing=north,active=true,pushing=false":  { "model": "magnetized:block/electromagnet_block_pull" },
+    "facing=north,active=true,pushing=true":   { "model": "magnetized:block/electromagnet_block_push" },
+    "facing=south,active=false,pushing=false": { "model": "magnetized:block/electromagnet_block", "y": 180 },
+    "facing=south,active=false,pushing=true":  { "model": "magnetized:block/electromagnet_block", "y": 180 },
+    "facing=south,active=true,pushing=false":  { "model": "magnetized:block/electromagnet_block_pull", "y": 180 },
+    "facing=south,active=true,pushing=true":   { "model": "magnetized:block/electromagnet_block_push", "y": 180 },
+    "facing=east,active=false,pushing=false":  { "model": "magnetized:block/electromagnet_block", "y": 90 },
+    "facing=east,active=false,pushing=true":   { "model": "magnetized:block/electromagnet_block", "y": 90 },
+    "facing=east,active=true,pushing=false":   { "model": "magnetized:block/electromagnet_block_pull", "y": 90 },
+    "facing=east,active=true,pushing=true":    { "model": "magnetized:block/electromagnet_block_push", "y": 90 },
+    "facing=west,active=false,pushing=false":  { "model": "magnetized:block/electromagnet_block", "y": 270 },
+    "facing=west,active=false,pushing=true":   { "model": "magnetized:block/electromagnet_block", "y": 270 },
+    "facing=west,active=true,pushing=false":   { "model": "magnetized:block/electromagnet_block_pull", "y": 270 },
+    "facing=west,active=true,pushing=true":    { "model": "magnetized:block/electromagnet_block_push", "y": 270 }
+  }
+}

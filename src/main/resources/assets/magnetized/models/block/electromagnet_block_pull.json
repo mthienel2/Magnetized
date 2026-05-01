@@ -1,0 +1,12 @@
+{
+	"parent": "minecraft:block/cube",
+	"textures": {
+		"down": "magnetized:block/electromagnet_block_side",
+		"east": "magnetized:block/electromagnet_block_side",
+		"north": "magnetized:block/electromagnet_block_pull_front",
+		"particle": "magnetized:block/electromagnet_block_side",
+		"south": "magnetized:block/electromagnet_block_side",
+		"up": "magnetized:block/electromagnet_block_side",
+		"west": "magnetized:block/electromagnet_block_side"
+	}
+}
