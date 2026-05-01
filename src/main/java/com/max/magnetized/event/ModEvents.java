@@ -1,25 +1,60 @@
 package com.max.magnetized.event;
 
 import com.max.magnetized.Magnetized;
+import com.max.magnetized.block.ElectromagnetBlock;
 import com.max.magnetized.block.ModBlocks;
+import com.max.magnetized.block.entity.ElectromagnetBlockEntity;
 import com.max.magnetized.compat.CuriosCompat;
 import com.max.magnetized.component.ModDataComponents;
 import com.max.magnetized.item.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.List;
 
 @EventBusSubscriber(modid = Magnetized.MODID)
 public class ModEvents {
+
+    @SubscribeEvent
+    public static void onNeighborNotify(BlockEvent.NeighborNotifyEvent event) {
+        Level level = (Level) event.getLevel();
+        if (level.isClientSide()) return;
+
+        BlockPos pos = event.getPos();
+
+        // Check all neighbors of the changed block for electromagnets
+        for (Direction direction : Direction.values()) {
+            BlockPos neighborPos = pos.relative(direction);
+            BlockState neighborState = level.getBlockState(neighborPos);
+
+            if (!neighborState.is(ModBlocks.ELECTROMAGNET_BLOCK.get())) continue;
+
+            BlockEntity be = level.getBlockEntity(neighborPos);
+            if (be instanceof ElectromagnetBlockEntity electromagnet) {
+                boolean powered = level.hasNeighborSignal(neighborPos);
+                boolean shouldBeActive = !electromagnet.isRequiresRedstone() || powered;
+                boolean currentlyActive = neighborState.getValue(ElectromagnetBlock.ACTIVE);
+
+                if (shouldBeActive != currentlyActive) {
+                    BlockState newState = neighborState.setValue(ElectromagnetBlock.ACTIVE, shouldBeActive);
+                    level.setBlock(neighborPos, newState, 3);
+                    level.sendBlockUpdated(neighborPos, neighborState, newState, 3);
+                }
+            }
+        }
+    }
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
