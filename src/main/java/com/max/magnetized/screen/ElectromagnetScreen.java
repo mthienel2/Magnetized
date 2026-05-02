@@ -1,8 +1,9 @@
 package com.max.magnetized.screen;
-
+import com.max.magnetized.event.ElectromagnetVisualizationEvents;
 import com.max.magnetized.block.ElectromagnetBlock;
 import com.max.magnetized.menu.ElectromagnetMenu;
 import com.max.magnetized.network.ElectromagnetUpdatePacket;
+
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -22,7 +23,7 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
     private boolean pushing;
 
     public ElectromagnetScreen(ElectromagnetMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, 200, 130);
+        super(menu, inventory, title, 200, 150);
         this.range = menu.getBlockEntity().getRange();
         this.width = menu.getBlockEntity().getWidth();
         this.requiresRedstone = menu.getBlockEntity().isRequiresRedstone();
@@ -36,20 +37,19 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
         // Range buttons
         addRenderableWidget(Button.builder(Component.literal("-"), btn -> {
             if (range > 3) { range--; sendUpdate(); }
-        }).bounds(leftPos + 20, topPos + 15, 20, 20).build());
+        }).bounds(leftPos + 20, topPos + 9, 20, 20).build());
 
         addRenderableWidget(Button.builder(Component.literal("+"), btn -> {
             if (range < 9) { range++; sendUpdate(); }
-        }).bounds(leftPos + 110, topPos + 15, 20, 20).build());
+        }).bounds(leftPos + 160, topPos + 9, 20, 20).build());
 
-        // Width buttons
         addRenderableWidget(Button.builder(Component.literal("-"), btn -> {
             if (width > 1) { width--; sendUpdate(); }
-        }).bounds(leftPos + 20, topPos + 43, 20, 20).build());
+        }).bounds(leftPos + 20, topPos + 37, 20, 20).build());
 
         addRenderableWidget(Button.builder(Component.literal("+"), btn -> {
             if (width < 9) { width++; sendUpdate(); }
-        }).bounds(leftPos + 110, topPos + 43, 20, 20).build());
+        }).bounds(leftPos + 160, topPos + 37, 20, 20).build());
 
         // Push/Pull toggle
         addRenderableWidget(Button.builder(
@@ -57,7 +57,7 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
                     pushing = !pushing;
                     btn.setMessage(Component.literal(pushing ? "Mode: Push" : "Mode: Pull"));
                     sendUpdate();
-                }).bounds(leftPos + 20, topPos + 71, 156, 20).build());
+                }).bounds(leftPos + 20, topPos + 65, 160, 20).build());
 
         // Signal mode toggle
         addRenderableWidget(Button.builder(
@@ -65,13 +65,16 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
                     requiresRedstone = !requiresRedstone;
                     btn.setMessage(Component.literal(requiresRedstone ? "High Signal" : "Low Signal"));
                     sendUpdate();
-                }).bounds(leftPos + 20, topPos + 96, 156, 20).build());
-    }
+                }).bounds(leftPos + 20, topPos + 92, 160, 20).build());
 
-    @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        this.extractTransparentBackground(graphics);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+        // Preview toggle
+        addRenderableWidget(Button.builder(
+                Component.literal(ElectromagnetVisualizationEvents.isVisualized(
+                        menu.getBlockEntity().getBlockPos()) ? "Preview: On" : "Preview: Off"), btn -> {
+                    ElectromagnetVisualizationEvents.toggle(menu.getBlockEntity().getBlockPos());
+                    btn.setMessage(Component.literal(ElectromagnetVisualizationEvents.isVisualized(
+                            menu.getBlockEntity().getBlockPos()) ? "Preview: On" : "Preview: Off"));
+                }).bounds(leftPos + 20, topPos + 119, 160, 20).build());
     }
 
     @Override
@@ -79,9 +82,15 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
         String rangeText = "Range: " + range;
         String widthText = "Width: " + width;
 
-        int centerX = 75;
-        graphics.text(font, Component.literal(rangeText), centerX - font.width(rangeText) / 2, 21, 0xFF404040, false);
-        graphics.text(font, Component.literal(widthText), centerX - font.width(widthText) / 2, 49, 0xFF404040, false);
+        int centerX = 100;
+        graphics.text(font, Component.literal(rangeText), centerX - font.width(rangeText) / 2, 15, 0xFF404040, false);
+        graphics.text(font, Component.literal(widthText), centerX - font.width(widthText) / 2, 43, 0xFF404040, false);
+    }
+
+    @Override
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        this.extractTransparentBackground(graphics);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
     }
 
     @Override
