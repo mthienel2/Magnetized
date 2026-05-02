@@ -1,5 +1,6 @@
 {
   "values": [
-    "magnetized:magnet_nullifier"
+    "magnetized:magnet_nullifier",
+    "magnetized:electromagnet_block"
   ]
 }
