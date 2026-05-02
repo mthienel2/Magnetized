@@ -86,7 +86,7 @@ public class Magnetized {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        Config.ITEM_STRINGS.get().forEach((item) -> LOGGER.info("ITEM >> {}", item));
+
     }
 
     @SubscribeEvent
