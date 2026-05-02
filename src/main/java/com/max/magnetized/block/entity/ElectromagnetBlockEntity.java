@@ -13,7 +13,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -136,22 +135,22 @@ public class ElectromagnetBlockEntity extends BlockEntity implements MenuProvide
         switch (facing) {
             case NORTH -> {
                 minX = bx - halfWidth; maxX = bx + halfWidth;
-                minY = by - halfWidth; maxY = by + halfWidth;
-                minZ = bz - effectiveRange; maxZ = bz;
+                minY = by - 0.5; maxY = by + 0.5;
+                minZ = bz - effectiveRange; maxZ = bz - 0.5;
             }
             case SOUTH -> {
                 minX = bx - halfWidth; maxX = bx + halfWidth;
-                minY = by - halfWidth; maxY = by + halfWidth;
-                minZ = bz; maxZ = bz + effectiveRange;
+                minY = by - 0.5; maxY = by + 0.5;
+                minZ = bz + 0.5; maxZ = bz + effectiveRange;
             }
             case EAST -> {
-                minX = bx; maxX = bx + effectiveRange;
-                minY = by - halfWidth; maxY = by + halfWidth;
+                minX = bx + 0.5; maxX = bx + effectiveRange;
+                minY = by - 0.5; maxY = by + 0.5;
                 minZ = bz - halfWidth; maxZ = bz + halfWidth;
             }
             case WEST -> {
-                minX = bx - effectiveRange; maxX = bx;
-                minY = by - halfWidth; maxY = by + halfWidth;
+                minX = bx - effectiveRange; maxX = bx - 0.5;
+                minY = by - 0.5; maxY = by + 0.5;
                 minZ = bz - halfWidth; maxZ = bz + halfWidth;
             }
             default -> { return; }
@@ -181,16 +180,23 @@ public class ElectromagnetBlockEntity extends BlockEntity implements MenuProvide
                 entity.addDeltaMovement(new Vec3(-dx * speed, 0, -dz * speed));
             }
 
+            if (halfWidth > 0.5) {
+                double centeringSpeed = 0.1;
+                if (facing == Direction.NORTH || facing == Direction.SOUTH) {
+                    double offsetX = bx - entity.getX();
+                    entity.addDeltaMovement(new Vec3(offsetX * centeringSpeed, 0, 0));
+                } else {
+                    double offsetZ = bz - entity.getZ();
+                    entity.addDeltaMovement(new Vec3(0, 0, offsetZ * centeringSpeed));
+                }
+            }
+
             Vec3 movement = entity.getDeltaMovement();
             double maxVelocity = 0.4;
             double horizontalSpeed = Math.sqrt(movement.x * movement.x + movement.z * movement.z);
             if (horizontalSpeed > maxVelocity) {
                 double scale = maxVelocity / horizontalSpeed;
                 entity.setDeltaMovement(movement.x * scale, movement.y, movement.z * scale);
-            }
-
-            if (entity instanceof Mob mob) {
-                mob.getNavigation().stop();
             }
 
             entity.hurtMarked = true;
