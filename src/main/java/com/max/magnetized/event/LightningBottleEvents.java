@@ -103,6 +103,11 @@ public class LightningBottleEvents {
             BlockPos pos = entry.getKey();
             int ticksLeft = entry.getValue() - 1;
 
+            if (!level.getBlockState(pos).is(Blocks.LIGHTNING_ROD)) {
+                struck.remove(pos);
+                return true;
+            }
+
             if (ticksLeft <= 0) {
                 struck.remove(pos);
                 return true;
