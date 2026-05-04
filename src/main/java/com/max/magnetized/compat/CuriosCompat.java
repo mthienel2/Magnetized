@@ -1,7 +1,7 @@
 package com.max.magnetized.compat;
 
 import com.max.magnetized.component.ModDataComponents;
-import com.max.magnetized.item.ModItems;
+import com.max.magnetized.item.MagnetItem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -13,7 +13,7 @@ public class CuriosCompat {
                 handler.getStacksHandler("charm").map(stacksHandler -> {
                     for (int i = 0; i < stacksHandler.getSlots(); i++) {
                         ItemStack stack = stacksHandler.getStacks().getStackInSlot(i);
-                        if (stack.is(ModItems.MAGNET_ITEM.get())) {
+                        if (stack.getItem() instanceof MagnetItem) {
                             return stack;
                         }
                     }

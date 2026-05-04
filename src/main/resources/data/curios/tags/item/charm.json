@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "magnetized:magnet_item"
+    "magnetized:magnet_item",
+    "magnetized:supercharged_magnet_item"
   ]
 }

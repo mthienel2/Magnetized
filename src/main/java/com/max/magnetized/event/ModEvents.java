@@ -6,7 +6,7 @@ import com.max.magnetized.block.ModBlocks;
 import com.max.magnetized.block.entity.ElectromagnetBlockEntity;
 import com.max.magnetized.compat.CuriosCompat;
 import com.max.magnetized.component.ModDataComponents;
-import com.max.magnetized.item.ModItems;
+import com.max.magnetized.item.MagnetItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -74,7 +74,8 @@ public class ModEvents {
         if (!magnetStack.isEmpty()) {
             boolean active = magnetStack.getOrDefault(ModDataComponents.MAGNET_ACTIVE.get(), false);
             if (active) {
-                pullItemsToPlayer(player, level);
+                int radius = ((MagnetItem) magnetStack.getItem()).getRadius();
+                pullItemsToPlayer(player, level, radius);
             }
         }
     }
@@ -82,7 +83,7 @@ public class ModEvents {
     private static ItemStack findActiveMagnetInHotbar(Player player) {
         for (int i = 0; i < 9; i++) {
             ItemStack stack = player.getInventory().getItem(i);
-            if (stack.is(ModItems.MAGNET_ITEM.get())) {
+            if (stack.getItem() instanceof MagnetItem) {
                 return stack;
             }
         }
@@ -115,11 +116,8 @@ public class ModEvents {
         return false;
     }
 
-    private static void pullItemsToPlayer(Player player, Level level) {
-        // If the player is in a nullifier zone, shut off the magnet entirely
+    private static void pullItemsToPlayer(Player player, Level level, int radius) {
         if (isNearNullifier(player, level)) return;
-
-        int radius = 7;
 
         AABB area = new AABB(
                 player.getX() - radius, player.getY() - radius, player.getZ() - radius,

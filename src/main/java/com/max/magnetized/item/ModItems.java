@@ -17,6 +17,9 @@ public class ModItems {
     public static final DeferredItem<MagnetItem> MAGNET_ITEM =
             ITEMS.registerItem("magnet_item", MagnetItem::new, props -> props.stacksTo(1));
 
+    public static final DeferredItem<SuperchargedMagnetItem> SUPERCHARGED_MAGNET_ITEM =
+            ITEMS.registerItem("supercharged_magnet_item", SuperchargedMagnetItem::new, props -> props.stacksTo(1));
+
     public static final DeferredItem<LightningBottleItem> LIGHTNING_BOTTLE_ITEM =
             ITEMS.registerItem("lightning_bottle_item", LightningBottleItem::new, props -> props
                     .stacksTo(1)

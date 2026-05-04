@@ -22,6 +22,10 @@ public class MagnetItem extends Item {
         super(properties);
     }
 
+    public int getRadius() {
+        return 5;
+    }
+
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -61,6 +65,7 @@ public class MagnetItem extends Item {
     }
 
     public static final Component MAGNET_TOOLTIP = Component.translatable("magnet.magnetized.magnet").withStyle(ChatFormatting.GRAY);
+
 
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
