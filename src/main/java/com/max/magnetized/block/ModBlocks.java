@@ -21,7 +21,7 @@ public class ModBlocks {
                     .setId(ResourceKey.create(Registries.BLOCK, registryName))
                     .mapColor(MapColor.METAL)
                     .strength(3.0f, 6.0f)
-                    .sound(SoundType.COPPER)
+                    .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops()
                     .lightLevel(state -> 4)
             )
