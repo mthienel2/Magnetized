@@ -6,7 +6,7 @@
   "key.magnetized.toggle_magnet": "Toggle Magnet",
 
   "item.magnetized.supercharged_magnet_item": "Supercharged Magnet",
-  "magnet.magnetized.supercharged_magnet": "Picks up items in a 9x9 radius around the player",
+  "magnet.magnetized.supercharged_magnet": "Picks up blocks in a 9x9 radius around the player",
 
   "item.magnetized.lightning_bottle_item": "Lightning in a Bottle",
 

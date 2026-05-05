@@ -272,10 +272,14 @@
 		"thirdperson_righthand": {
 			"translation": [0, 3.5, 0]
 		},
+		"ground": {
+			"scale": [0.4, 0.4, 0.4]
+		},
 		"gui": {
 			"rotation": [30, 225, 0],
-			"translation": [0, 0, 0],
-			"scale": [0.625, 0.625, 0.625]
+			"translation": [0, 2.5, 0],
+			"scale": [0.9, 0.9, 0.9]
+
 		},
 		"fixed": {
 			"translation": [0, 3.5, 0]

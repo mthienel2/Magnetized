@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 public class SuperchargedMagnetItem extends MagnetItem {
 
-    public static final Component TOOLTIP = Component.translatable("magnet.magnetized.supercharged_magnet").withStyle(ChatFormatting.DARK_GRAY);
+    public static final Component TOOLTIP = Component.translatable("magnet.magnetized.supercharged_magnet").withStyle(ChatFormatting.GRAY);
 
     public SuperchargedMagnetItem(Properties properties) {
         super(properties);
