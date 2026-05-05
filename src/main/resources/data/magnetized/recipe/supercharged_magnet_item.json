@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "magnetized:magnet_item",
+    "magnetized:lightning_bottle_item"
+  ],
+  "result": {
+    "count": 1,
+    "id": "magnetized:supercharged_magnet_item"
+  }
+}

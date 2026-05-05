@@ -5,6 +5,7 @@ import com.max.magnetized.block.ModBlocks;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.component.Consumable;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -23,6 +24,7 @@ public class ModItems {
     public static final DeferredItem<LightningBottleItem> LIGHTNING_BOTTLE_ITEM =
             ITEMS.registerItem("lightning_bottle_item", LightningBottleItem::new, props -> props
                     .stacksTo(1)
+                    .craftRemainder(Items.GLASS_BOTTLE)
                     .component(DataComponents.CONSUMABLE, Consumable.builder()
                             .consumeSeconds(1.6f)
                             .animation(ItemUseAnimation.DRINK)
