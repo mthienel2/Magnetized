@@ -3,12 +3,15 @@ package com.max.magnetized.event;
 import com.max.magnetized.Magnetized;
 import com.max.magnetized.client.MagnetActiveProperty;
 import com.max.magnetized.client.ModKeyMappings;
+import com.max.magnetized.particle.BlueSparkParticle;
+import com.max.magnetized.particle.ModParticleTypes;
 import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 
 @EventBusSubscriber(modid = Magnetized.MODID, value = Dist.CLIENT)
 public class ModClientEvents {
@@ -24,6 +27,11 @@ public class ModClientEvents {
     @SubscribeEvent
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(ModKeyMappings.TOGGLE_MAGNET);
+    }
+
+    @SubscribeEvent
+    public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModParticleTypes.BLUE_SPARK.get(), BlueSparkParticle.Provider::new);
     }
 
 }

@@ -2,8 +2,8 @@ package com.max.magnetized.event;
 
 import com.max.magnetized.Magnetized;
 import com.max.magnetized.item.ModItems;
+import com.max.magnetized.particle.ModParticleTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.DustColorTransitionOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -31,9 +31,6 @@ import java.util.WeakHashMap;
 
 @EventBusSubscriber(modid = Magnetized.MODID)
 public class LightningBottleEvents {
-
-    private static final DustColorTransitionOptions LIGHTNING_DUST =
-            new DustColorTransitionOptions(0x3399FF, 0xFFFFFF, 1.0f);
 
     private static final Map<Level, Set<BlockPos>> struckRods =
             Collections.synchronizedMap(new WeakHashMap<>());
@@ -116,14 +113,15 @@ public class LightningBottleEvents {
             entry.setValue(ticksLeft);
 
             if (spawnParticles) {
-                ((ServerLevel) level).sendParticles(
-                        LIGHTNING_DUST,
+                ServerLevel serverLevel = (ServerLevel) level;
+                serverLevel.sendParticles(
+                        ModParticleTypes.BLUE_SPARK.get(),
                         pos.getX() + 0.5,
                         pos.getY() + 1.0,
                         pos.getZ() + 0.5,
-                        5,
-                        0.1, 0.2, 0.1,
-                        0.02
+                        4,
+                        0.15, 0.25, 0.15,
+                        0.03
                 );
             }
 
@@ -146,13 +144,14 @@ public class LightningBottleEvents {
         Set<BlockPos> struck = struckRods.get(level);
 
         if (!level.isClientSide() && struck != null && struck.contains(pos)) {
-            for (int i = 0; i < 8; i++) {
-                ((ServerLevel) level).sendParticles(
-                        LIGHTNING_DUST,
+            ServerLevel serverLevel = (ServerLevel) level;
+            for (int i = 0; i < 3; i++) {
+                serverLevel.sendParticles(
+                        ModParticleTypes.BLUE_SPARK.get(),
                         pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
-                        8,
-                        0.2, 0.3, 0.2,
-                        0.05
+                        12,
+                        0.3, 0.4, 0.3,
+                        0.08
                 );
             }
         }

@@ -6,6 +6,7 @@ import com.max.magnetized.component.ModDataComponents;
 import com.max.magnetized.item.ModItems;
 import com.max.magnetized.menu.ModMenuTypes;
 import com.max.magnetized.network.ElectromagnetUpdatePacket;
+import com.max.magnetized.particle.ModParticleTypes;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
@@ -49,9 +50,9 @@ public class Magnetized {
             .displayItems((parameters, output) -> {
                 output.accept(MAGNET_ITEM.get());
                 output.accept(SUPERCHARGED_MAGNET_ITEM.get());
-                output.accept(MAGNET_NULLIFIER_ITEM.get());
                 output.accept(LIGHTNING_BOTTLE_ITEM.get());
                 output.accept(ELECTROMAGNET_BLOCK_ITEM.get());
+                output.accept(MAGNET_NULLIFIER_ITEM.get());
             }).build());
 
     public Magnetized(IEventBus modEventBus, ModContainer modContainer) {
@@ -64,6 +65,7 @@ public class Magnetized {
         ModDataComponents.DATA_COMPONENTS.register(modEventBus);
 
         ModMenuTypes.MENU_TYPES.register(modEventBus);
+        ModParticleTypes.PARTICLE_TYPES.register(modEventBus);
         modEventBus.addListener(this::registerPayloads);
 
         NeoForge.EVENT_BUS.register(this);
