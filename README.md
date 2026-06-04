@@ -2,10 +2,9 @@
 Magnetized
 =======
 
-This is a mod for Minecraft version 26.1.2 that adds a magnet that can
-pick up blocks in a 7x7 radius around the player. You can toggle the magnet
-on or off with the M key by default. Eventually there will be more content,
-but until then enjoy using the magnet. There's curios compatibility, although it isn't required
+This is a mod for Minecraft version 26.1.2 that adds  magnets that can
+pick up blocks in a 5x5, and 9x9 radius around the player. You can toggle the magnets
+on or off with the M key by default. There's curios compatibility, although it isn't required
 in order to use the mod.
 
 Get in contact
