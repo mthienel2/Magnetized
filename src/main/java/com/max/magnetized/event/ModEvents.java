@@ -10,6 +10,7 @@ import com.max.magnetized.item.MagnetItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -130,6 +131,8 @@ public class ModEvents {
         for (ItemEntity item : items) {
             // Skip items that are inside a nullifier zone
             if (isNearNullifier(item, level)) continue;
+            // Prevents crazy item whiplash when you throw a block onto the ground
+            if (item.hasPickUpDelay()) continue;
 
             double dx = player.getX() - item.getX();
             double dy = (player.getY() + 0.3) - item.getY();
@@ -140,12 +143,37 @@ public class ModEvents {
             double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
             if (distance > 0.5) {
-                double speed = 0.3;
+                double speed = 1.4;
 
                 item.setDeltaMovement(
                         dx / distance * speed,
                         dy / distance * speed,
                         dz / distance * speed
+                );
+            }
+        }
+
+        List<ExperienceOrb> expOrbs = level.getEntitiesOfClass(ExperienceOrb.class, area);
+
+        for (ExperienceOrb exp : expOrbs) {
+            // Skip exp orbs that are inside a nullifier zone
+            if (isNearNullifier(exp, level)) continue;
+
+            double orb_dx = player.getX() - exp.getX();
+            double orb_dy = (player.getY() + 0.3) - exp.getY();
+            double orb_dz = player.getZ() - exp.getZ();
+
+            orb_dy *= 0.25;
+
+            double orb_distance = Math.sqrt(orb_dx * orb_dx + orb_dy * orb_dy + orb_dz * orb_dz);
+
+            if (orb_distance > 0.5) {
+                double orb_speed = 1.1;
+
+                exp.setDeltaMovement(
+                        orb_dx / orb_distance * orb_speed,
+                        orb_dy / orb_distance * orb_speed,
+                        orb_dz / orb_distance * orb_speed
                 );
             }
         }
