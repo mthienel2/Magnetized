@@ -1,5 +1,8 @@
 {
   "textures": [
-    "minecraft:glow"
+    "magnetized:blue_spark_0",
+    "magnetized:blue_spark_1",
+    "magnetized:blue_spark_2",
+    "magnetized:blue_spark_3"
   ]
 }
