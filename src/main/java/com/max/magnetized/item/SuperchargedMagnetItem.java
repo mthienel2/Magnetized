@@ -22,6 +22,11 @@ public class SuperchargedMagnetItem extends MagnetItem {
     }
 
     @Override
+    public boolean hasAutoPickup() {
+        return true;
+    }
+
+    @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
         builder.accept(TOOLTIP);
     }

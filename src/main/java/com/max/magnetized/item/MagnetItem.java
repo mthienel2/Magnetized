@@ -26,6 +26,10 @@ public class MagnetItem extends Item {
         return 5;
     }
 
+    public boolean hasAutoPickup() {
+        return false;
+    }
+
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);

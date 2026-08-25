@@ -9,6 +9,9 @@ import com.max.magnetized.component.ModDataComponents;
 import com.max.magnetized.item.MagnetItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -21,9 +24,13 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
+import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.Iterator;
 import java.util.List;
 
 @EventBusSubscriber(modid = Magnetized.MODID)
@@ -76,9 +83,52 @@ public class ModEvents {
         if (!magnetStack.isEmpty()) {
             boolean active = magnetStack.getOrDefault(ModDataComponents.MAGNET_ACTIVE.get(), false);
             if (active) {
-                int radius = ((MagnetItem) magnetStack.getItem()).getRadius();
-                pullItemsToPlayer(player, level, radius);
+                MagnetItem magnet = (MagnetItem) magnetStack.getItem();
+                pullItemsToPlayer(player, level, magnet, magnet.getRadius());
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onBlockDrops(BlockDropsEvent event) {
+        if (!(event.getBreaker() instanceof Player player)) return;
+
+        ItemStack magnetStack = findActiveMagnetInHotbar(player);
+        if (magnetStack.isEmpty() && ModList.get().isLoaded("curios")) {
+            magnetStack = CuriosCompat.findMagnetInCurios(player);
+        }
+        if (magnetStack.isEmpty()) return;
+
+        boolean active = magnetStack.getOrDefault(ModDataComponents.MAGNET_ACTIVE.get(), false);
+        if (!active) return;
+
+        MagnetItem magnet = (MagnetItem) magnetStack.getItem();
+        if (!magnet.hasAutoPickup()) return;
+
+        if (isNearNullifier(player, event.getLevel())) return;
+
+        boolean pickedUpAny = false;
+        Iterator<ItemEntity> iterator = event.getDrops().iterator();
+        while (iterator.hasNext()) {
+            ItemStack drop = iterator.next().getItem();
+
+            if (player.getInventory().add(drop)) {
+                pickedUpAny = true;
+                if (drop.isEmpty()) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        if (pickedUpAny) {
+            player.level().playSound(
+                    null,
+                    player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.ITEM_PICKUP,
+                    SoundSource.PLAYERS,
+                    0.2F,
+                    ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F
+            );
         }
     }
 
@@ -118,7 +168,27 @@ public class ModEvents {
         return false;
     }
 
-    private static void pullItemsToPlayer(Player player, Level level, int radius) {
+    private static void tryAutoPickup(Player player, ItemEntity item) {
+        ItemEntityPickupEvent.Pre pre = new ItemEntityPickupEvent.Pre(player, item);
+        NeoForge.EVENT_BUS.post(pre);
+        if (pre.canPickup() == TriState.FALSE) return;
+
+        ItemStack original = item.getItem().copy();
+        ItemStack remaining = item.getItem();
+        int startCount = remaining.getCount();
+
+        if (player.getInventory().add(remaining)) {
+            player.take(item, startCount - remaining.getCount());
+
+            if (remaining.isEmpty()) {
+                item.discard();
+            }
+
+            NeoForge.EVENT_BUS.post(new ItemEntityPickupEvent.Post(player, item, original));
+        }
+    }
+
+    private static void pullItemsToPlayer(Player player, Level level, MagnetItem magnet, int radius) {
         if (isNearNullifier(player, level)) return;
 
         AABB area = new AABB(
@@ -141,6 +211,11 @@ public class ModEvents {
             dy *= 0.25;
 
             double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+            if (magnet.hasAutoPickup() && distance <= 0.5) {
+                tryAutoPickup(player, item);
+                continue;
+            }
 
             if (distance > 0.5) {
                 double speed = 1.4;
