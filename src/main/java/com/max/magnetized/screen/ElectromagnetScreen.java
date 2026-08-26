@@ -21,6 +21,7 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
     private int width;
     private boolean requiresRedstone;
     private boolean pushing;
+    private boolean particlesEnabled;
 
     public ElectromagnetScreen(ElectromagnetMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, 200, 150);
@@ -28,6 +29,7 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
         this.width = menu.getBlockEntity().getWidth();
         this.requiresRedstone = menu.getBlockEntity().isRequiresRedstone();
         this.pushing = menu.getBlockEntity().getBlockState().getValue(ElectromagnetBlock.PUSHING);
+        this.particlesEnabled = menu.getBlockEntity().isParticlesEnabled();
     }
 
     @Override
@@ -45,11 +47,11 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
 
         addRenderableWidget(Button.builder(Component.literal("-"), btn -> {
             if (width > 1) { width--; sendUpdate(); }
-        }).bounds(leftPos + 20, topPos + 37, 20, 20).build());
+        }).bounds(leftPos + 20, topPos + 33, 20, 20).build());
 
         addRenderableWidget(Button.builder(Component.literal("+"), btn -> {
             if (width < 9) { width++; sendUpdate(); }
-        }).bounds(leftPos + 160, topPos + 37, 20, 20).build());
+        }).bounds(leftPos + 160, topPos + 33, 20, 20).build());
 
         // Push/Pull toggle
         addRenderableWidget(Button.builder(
@@ -57,7 +59,7 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
                     pushing = !pushing;
                     btn.setMessage(Component.literal(pushing ? "Mode: Push" : "Mode: Pull"));
                     sendUpdate();
-                }).bounds(leftPos + 20, topPos + 65, 160, 20).build());
+                }).bounds(leftPos + 20, topPos + 57, 160, 16).build());
 
         // Signal mode toggle
         addRenderableWidget(Button.builder(
@@ -65,7 +67,15 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
                     requiresRedstone = !requiresRedstone;
                     btn.setMessage(Component.literal(requiresRedstone ? "High Signal" : "Low Signal"));
                     sendUpdate();
-                }).bounds(leftPos + 20, topPos + 92, 160, 20).build());
+                }).bounds(leftPos + 20, topPos + 79, 160, 16).build());
+
+        // Particle effects toggle
+        addRenderableWidget(Button.builder(
+                Component.literal(particlesEnabled ? "Particles: On" : "Particles: Off"), btn -> {
+                    particlesEnabled = !particlesEnabled;
+                    btn.setMessage(Component.literal(particlesEnabled ? "Particles: On" : "Particles: Off"));
+                    sendUpdate();
+                }).bounds(leftPos + 20, topPos + 101, 160, 16).build());
 
         // Preview toggle
         addRenderableWidget(Button.builder(
@@ -74,7 +84,7 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
                     ElectromagnetVisualizationEvents.toggle(menu.getBlockEntity().getBlockPos());
                     btn.setMessage(Component.literal(ElectromagnetVisualizationEvents.isVisualized(
                             menu.getBlockEntity().getBlockPos()) ? "Preview: On" : "Preview: Off"));
-                }).bounds(leftPos + 20, topPos + 119, 160, 20).build());
+                }).bounds(leftPos + 20, topPos + 123, 160, 16).build());
     }
 
     @Override
@@ -84,7 +94,7 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
 
         int centerX = 100;
         graphics.text(font, Component.literal(rangeText), centerX - font.width(rangeText) / 2, 15, 0xFF404040, false);
-        graphics.text(font, Component.literal(widthText), centerX - font.width(widthText) / 2, 43, 0xFF404040, false);
+        graphics.text(font, Component.literal(widthText), centerX - font.width(widthText) / 2, 39, 0xFF404040, false);
     }
 
     @Override
@@ -101,7 +111,7 @@ public class ElectromagnetScreen extends AbstractContainerScreen<ElectromagnetMe
     private void sendUpdate() {
         ElectromagnetUpdatePacket.send(
                 menu.getBlockEntity().getBlockPos(),
-                range, width, requiresRedstone, pushing
+                range, width, requiresRedstone, pushing, particlesEnabled
         );
     }
 }

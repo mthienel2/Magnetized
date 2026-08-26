@@ -2,6 +2,8 @@ package com.max.magnetized.block.entity;
 
 import com.max.magnetized.block.ElectromagnetBlock;
 import com.max.magnetized.menu.ElectromagnetMenu;
+import com.max.magnetized.particle.FieldSparkParticle;
+import com.max.magnetized.particle.ModParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -11,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -33,6 +36,7 @@ public class ElectromagnetBlockEntity extends BlockEntity implements MenuProvide
     private int range = 5;
     private int width = 1;
     private boolean requiresRedstone = true;
+    private boolean particlesEnabled = true;
 
     public ElectromagnetBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ELECTROMAGNET_BLOCK_ENTITY.get(), pos, state);
@@ -59,6 +63,13 @@ public class ElectromagnetBlockEntity extends BlockEntity implements MenuProvide
         syncToClient();
     }
 
+    public boolean isParticlesEnabled() { return particlesEnabled; }
+    public void setParticlesEnabled(boolean particlesEnabled) {
+        this.particlesEnabled = particlesEnabled;
+        setChanged();
+        syncToClient();
+    }
+
     private void syncToClient() {
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -81,6 +92,7 @@ public class ElectromagnetBlockEntity extends BlockEntity implements MenuProvide
         this.range = input.getIntOr("range", 5);
         this.width = input.getIntOr("width", 1);
         this.requiresRedstone = input.getBooleanOr("requiresRedstone", true);
+        this.particlesEnabled = input.getBooleanOr("particlesEnabled", true);
     }
 
     @Override
@@ -89,6 +101,7 @@ public class ElectromagnetBlockEntity extends BlockEntity implements MenuProvide
         output.putInt("range", this.range);
         output.putInt("width", this.width);
         output.putBoolean("requiresRedstone", this.requiresRedstone);
+        output.putBoolean("particlesEnabled", this.particlesEnabled);
     }
 
     @Override
@@ -125,6 +138,10 @@ public class ElectromagnetBlockEntity extends BlockEntity implements MenuProvide
         }
 
         if (effectiveRange == 0) return;
+
+        if (be.isParticlesEnabled() && level instanceof ServerLevel serverLevel && level.getGameTime() % 6 == 0) {
+            spawnFieldParticles(serverLevel, pos, facing, pushing, effectiveRange, be.getWidth());
+        }
 
         double bx = pos.getX() + 0.5;
         double by = pos.getY() + 0.5;
@@ -200,6 +217,46 @@ public class ElectromagnetBlockEntity extends BlockEntity implements MenuProvide
             }
 
             entity.hurtMarked = true;
+        }
+    }
+
+    private static void spawnFieldParticles(ServerLevel level, BlockPos pos, Direction facing, boolean pushing,
+                                             int effectiveRange, int width) {
+        double bx = pos.getX() + 0.5;
+        double by = pos.getY() + 0.5;
+        double bz = pos.getZ() + 0.5;
+
+        double dirX = facing.getStepX();
+        double dirZ = facing.getStepZ();
+
+        // Pushing: spawn just past the electromagnet's face and fly outward. Pulling: spawn just
+        // short of the far end of the beam and fly back toward the block. In both cases the spawn
+        // point is nudged away from whichever face it sits on, so the spark doesn't visibly emit
+        // from inside the electromagnet or the adjacent block that caps the beam's range.
+        double spawnClearance = 0.15;
+        double sign = pushing ? 1.0 : -1.0;
+        double originDistance = pushing ? 0.5 + spawnClearance : effectiveRange + 0.5 - spawnClearance;
+        double speed = effectiveRange / (double) FieldSparkParticle.LIFETIME_TICKS;
+
+        var particleType = pushing ? ModParticleTypes.FIELD_SPARK.get() : ModParticleTypes.FIELD_SPARK_PULL.get();
+
+        // One spark per unit of width, spread symmetrically across the beam's cross-section so a
+        // wide beam reads as a wall of sparks instead of a single center-line spark. Width 1
+        // collapses to a single offset of 0, matching the original dead-center behavior.
+        boolean crossOnX = facing == Direction.NORTH || facing == Direction.SOUTH;
+        for (int i = 0; i < width; i++) {
+            double crossOffset = i - (width - 1) / 2.0;
+
+            double x = bx + dirX * originDistance + (crossOnX ? crossOffset : 0);
+            double z = bz + dirZ * originDistance + (crossOnX ? 0 : crossOffset);
+
+            level.sendParticles(
+                    particleType,
+                    x, by, z,
+                    0,
+                    dirX * sign * speed, 0, dirZ * sign * speed,
+                    1.0
+            );
         }
     }
 }

@@ -15,7 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record ElectromagnetUpdatePacket(BlockPos pos, int range, int width, boolean requiresRedstone, boolean pushing)
+public record ElectromagnetUpdatePacket(BlockPos pos, int range, int width, boolean requiresRedstone, boolean pushing,
+                                         boolean particlesEnabled)
         implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<ElectromagnetUpdatePacket> TYPE =
@@ -28,6 +29,7 @@ public record ElectromagnetUpdatePacket(BlockPos pos, int range, int width, bool
                     ByteBufCodecs.INT, ElectromagnetUpdatePacket::width,
                     ByteBufCodecs.BOOL, ElectromagnetUpdatePacket::requiresRedstone,
                     ByteBufCodecs.BOOL, ElectromagnetUpdatePacket::pushing,
+                    ByteBufCodecs.BOOL, ElectromagnetUpdatePacket::particlesEnabled,
                     ElectromagnetUpdatePacket::new
             );
 
@@ -36,8 +38,10 @@ public record ElectromagnetUpdatePacket(BlockPos pos, int range, int width, bool
         return TYPE;
     }
 
-    public static void send(BlockPos pos, int range, int width, boolean requiresRedstone, boolean pushing) {
-        ClientPacketDistributor.sendToServer(new ElectromagnetUpdatePacket(pos, range, width, requiresRedstone, pushing));
+    public static void send(BlockPos pos, int range, int width, boolean requiresRedstone, boolean pushing,
+                             boolean particlesEnabled) {
+        ClientPacketDistributor.sendToServer(
+                new ElectromagnetUpdatePacket(pos, range, width, requiresRedstone, pushing, particlesEnabled));
     }
 
     public static void handle(ElectromagnetUpdatePacket packet, IPayloadContext context) {
@@ -48,6 +52,7 @@ public record ElectromagnetUpdatePacket(BlockPos pos, int range, int width, bool
                     electromagnet.setRange(packet.range());
                     electromagnet.setWidth(packet.width());
                     electromagnet.setRequiresRedstone(packet.requiresRedstone());
+                    electromagnet.setParticlesEnabled(packet.particlesEnabled());
 
                     boolean hasRedstoneSignal = player.level().hasNeighborSignal(packet.pos());
                     boolean shouldBeActive = !packet.requiresRedstone() || hasRedstoneSignal;
