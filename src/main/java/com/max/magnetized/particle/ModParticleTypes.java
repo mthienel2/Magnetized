@@ -13,4 +13,10 @@ public class ModParticleTypes {
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLUE_SPARK =
             PARTICLE_TYPES.register("blue_spark", () -> new SimpleParticleType(false));
+
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FIELD_SPARK =
+            PARTICLE_TYPES.register("field_spark", () -> new SimpleParticleType(false));
+
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FIELD_SPARK_PULL =
+            PARTICLE_TYPES.register("field_spark_pull", () -> new SimpleParticleType(false));
 }
